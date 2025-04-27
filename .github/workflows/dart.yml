@@ -1,0 +1,46 @@
+name: Flutter CI CD by Adawy
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repo
+      - uses: actions/checkout@v4
+
+      # Setup Flutter environment
+      - name: Setup Flutter version 3.29.0
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.0' # Use the required Flutter version
+
+      # Install dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Verify code formatting
+      # Uncomment if you want to enforce formatting
+      # - name: Verify formatting
+      #   run: dart format --output=none --set-exit-if-changed .
+
+      # Analyze project
+      - name: Analyze project source
+        run: flutter analyze
+
+      # # Run tests
+      # - name: Run tests
+      #   run: flutter test
+
+      # Build Apk 
+      - name: Build apk release
+        run: flutter build apk --release
+      
+        # Build Apk 
+      - name: Build appbundle release
+        run: flutter build appbundle
