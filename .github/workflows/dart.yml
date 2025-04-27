@@ -41,7 +41,7 @@ jobs:
       - name: Build apk release
         run: flutter build apk --release
       
-        # Build Apk 
+        # Build Appbundle 
       - name: Build appbundle release
         run: flutter build appbundle
         
