@@ -33,6 +33,8 @@ The pipeline includes the following stages:
 ## **3. Setup GitHub Actions**
 Create `.github/workflows/flutter-ci-cd.yml` with the following:
 
+---
+
 ## **4. Required Secrets & Fastlane Setup**
 🔑 GitHub Secrets (Repo Settings → Secrets → Actions)
 Secret Name	Description
@@ -40,8 +42,9 @@ GOOGLE_PLAY_SERVICE_ACCOUNT	Google Play JSON API key (Fastlane).
 APP_STORE_CONNECT_API_KEY	App Store Connect API Key (Fastlane).
 FIREBASE_SERVICE_ACCOUNT	Firebase Hosting service account.
 
+---
 
-## 5. How to use fastlane
+## **5. How to use fastlane
 🚀 How to Use It?
 In your terminal:
 
@@ -50,6 +53,8 @@ fastlane deploy_playstore
 
 For iOS (upload to TestFlight):
 fastlane deploy_testflight
+
+---
 
 ```yaml
 
