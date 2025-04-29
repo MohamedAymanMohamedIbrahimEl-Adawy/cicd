@@ -1,0 +1,59 @@
+default_platform(:android)
+
+platform :android do
+  desc "Build and deploy Android to Google Play Store"
+  lane :deploy_playstore do
+    prepare_flutter
+
+    build_flutter_android
+
+    upload_to_play_store(
+      track: "internal",
+      json_key: "./fastlane/your_service_account.json",
+      package_name: "com.example.myapp"
+    )
+    send_notification("🎉 Android app uploaded to Google Play!")
+  end
+end
+
+platform :ios do
+  desc "Build and deploy iOS to TestFlight"
+  lane :deploy_testflight do
+    prepare_flutter
+
+    build_flutter_ios
+
+    build_ios_app(
+      workspace: "ios/Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store"
+    )
+
+    upload_to_testflight(
+      app_identifier: "com.example.myapp",
+      apple_id: "your-apple-id@example.com",
+      team_id: "YOUR_TEAM_ID"
+    )
+    send_notification("🍏 iOS app uploaded to TestFlight!")
+  end
+end
+
+private_lane :prepare_flutter do
+  sh("flutter pub get")
+end
+
+private_lane :build_flutter_android do
+  sh("flutter build apk --release")    # or "flutter build appbundle" for AAB
+end
+
+private_lane :build_flutter_ios do
+  sh("flutter build ios --release")
+end
+
+private_lane :send_notification do |message|
+    notification(
+      title: "Fastlane",
+      subtitle: "Deployment Status",
+      message: message
+    )
+end

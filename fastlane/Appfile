@@ -1,0 +1,8 @@
+# Android
+package_name("com.example.myapp")       
+json_key_file("./fastlane/your_service_account.json") 
+
+# iOS
+app_identifier("com.example.myapp")    
+apple_id("your-apple-id@example.com") 
+team_id("YOUR_TEAM_ID")   
