@@ -24,11 +24,17 @@ jobs:
       - name: Analyze project source
         run: flutter analyze
 
+      - name:
+        run: flutter test
+
       - name: Build APK release
         run: flutter build apk --release
 
       - name: Build AppBundle release
         run: flutter build appbundle
+      
+      - name: Build ipa release
+        run: flutter build ipa
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -42,53 +48,53 @@ jobs:
           name: release-appbundle-${{ github.run_number }}
           path: build/app/outputs/bundle/release/app-release.aab
           
-      - name: Upload artifact to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
-        with:
-          appId: ${{secrets.APP_ID}}
-          serviceCredentialsFileContent: ${{secrets.GOOGLE_APPLICATION_CREDENTIALS}}
-          groups: testers
-          file: build/app/outputs/flutter-apk/app-release.apk
+      # - name: Upload artifact to Firebase App Distribution
+      #   uses: wzieba/Firebase-Distribution-Github-Action@v1
+      #   with:
+      #     appId: ${{secrets.APP_ID}}
+      #     serviceCredentialsFileContent: ${{secrets.GOOGLE_APPLICATION_CREDENTIALS}}
+      #     groups: testers
+      #     file: build/app/outputs/flutter-apk/app-release.apk
 
-  deploy-web:
-    name: Deploy to Firebase
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-      - run: flutter pub get
-      - run: flutter build web --release
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
-          projectId: your-project-id
-          channelId: live
+  # deploy-web:
+  #   name: Deploy to Firebase
+  #   needs: build
+  #   if: github.ref == 'refs/heads/main'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: subosito/flutter-action@v2
+  #     - run: flutter pub get
+  #     - run: flutter build web --release
+  #     - uses: FirebaseExtended/action-hosting-deploy@v0
+  #       with:
+  #         repoToken: '${{ secrets.GITHUB_TOKEN }}'
+  #         firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+  #         projectId: your-project-id
+  #         channelId: live
 
-  deploy-ios:
-    name: Deploy to App Store
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.1.2'
-      - run: gem install fastlane -NV
-      - run: fastlane deploy_to_appstore
+  # deploy-ios:
+  #   name: Deploy to App Store
+  #   needs: build
+  #   if: github.ref == 'refs/heads/main'
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ruby/setup-ruby@v1
+  #       with:
+  #         ruby-version: '3.1.2'
+  #     - run: gem install fastlane -NV
+  #     - run: fastlane deploy_to_appstore
 
-  deploy-android:
-    name: Deploy to Google Play Store
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.1.2'
-      - run: gem install fastlane -NV
-      - run: fastlane supply --aab $(find . -name "*.aab") --track internal --json_key "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}"
+  # deploy-android:
+  #   name: Deploy to Google Play Store
+  #   needs: build
+  #   if: github.ref == 'refs/heads/main'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ruby/setup-ruby@v1
+  #       with:
+  #         ruby-version: '3.1.2'
+  #     - run: gem install fastlane -NV
+  #     - run: fastlane supply --aab $(find . -name "*.aab") --track internal --json_key "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}"
