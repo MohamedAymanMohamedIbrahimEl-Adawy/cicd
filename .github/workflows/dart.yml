@@ -34,19 +34,33 @@ jobs:
         run: flutter build appbundle
       
       - name: Build ios release
-        run: flutter build ios
+        run: flutter build ios --release
 
-      - name: Upload APK
+      - name: Upload Apk
         uses: actions/upload-artifact@v4
         with:
           name: release-apk-${{ github.run_number }}
           path: build/app/outputs/flutter-apk/app-release.apk
 
-      - name: Upload AppBundle
+      - name: Upload Appbundle
         uses: actions/upload-artifact@v4
         with:
           name: release-appbundle-${{ github.run_number }}
           path: build/app/outputs/bundle/release/app-release.aab
+
+      - name: Archive .app to .ipa
+        run: |
+          mkdir -p build/ios/ipa
+          xcrun xcodebuild -exportArchive \
+            -archivePath build/ios/archive/Runner.xcarchive \
+            -exportPath build/ios/ipa \
+            -exportOptionsPlist ios/ExportOptions.plist || true
+
+      - name: Upload .ipa as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: build/ios/ipa/
           
       # - name: Upload artifact to Firebase App Distribution
       #   uses: wzieba/Firebase-Distribution-Github-Action@v1
