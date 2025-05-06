@@ -44,33 +44,39 @@ jobs:
         with:
           name: release-appbundle-${{ github.run_number }}
           path: build/app/outputs/bundle/release/app-release.aab
-          
+
       - name: Build ios release
         run: flutter build ios --release --no-codesign
 
-      - name: Archive iOS app
-        run: |
-          flutter build ios --release --no-codesign
-          xcodebuild archive \
-            -workspace ios/Runner.xcworkspace \
-            -scheme Runner \
-            -configuration Release \
-            -archivePath build/ios/archive/Runner.xcarchive \
-            -destination "generic/platform=iOS" \
-            -allowProvisioningUpdates
-        
-      - name: Export .ipa
-        run: |
-          xcodebuild -exportArchive \
-            -archivePath build/ios/archive/Runner.xcarchive \
-            -exportPath build/ios/ipa \
-            -exportOptionsPlist ios/ExportOptions.plist
-
-      - name: Upload .ipa as artifact
+      - name: Upload Runner.app
         uses: actions/upload-artifact@v4
         with:
-          name: ios-ipa
-          path: build/ios/ipa/
+          name: ios-app
+          path: build/ios/iphoneos/Runner.app
+          
+      # - name: Archive iOS app
+      #   run: |
+      #     flutter build ios --release --no-codesign
+      #     xcodebuild archive \
+      #       -workspace ios/Runner.xcworkspace \
+      #       -scheme Runner \
+      #       -configuration Release \
+      #       -archivePath build/ios/archive/Runner.xcarchive \
+      #       -destination "generic/platform=iOS" \
+      #       -allowProvisioningUpdates
+        
+      # - name: Export .ipa
+      #   run: |
+      #     xcodebuild -exportArchive \
+      #       -archivePath build/ios/archive/Runner.xcarchive \
+      #       -exportPath build/ios/ipa \
+      #       -exportOptionsPlist ios/ExportOptions.plist
+
+      # - name: Upload .ipa as artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: ios-ipa
+      #     path: build/ios/ipa/
           
       # - name: Upload artifact to Firebase App Distribution
       #   uses: wzieba/Firebase-Distribution-Github-Action@v1
