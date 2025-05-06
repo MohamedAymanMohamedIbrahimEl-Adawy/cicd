@@ -34,7 +34,7 @@ jobs:
         run: flutter build appbundle
       
       - name: Build ipa release
-        run: flutter build ipa
+        run: flutter build ios --release
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
