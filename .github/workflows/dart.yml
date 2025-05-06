@@ -30,31 +30,41 @@ jobs:
       - name: Build APK release
         run: flutter build apk --release
 
-      - name: Build AppBundle release
-        run: flutter build appbundle
-      
-      - name: Build ios release
-        run: flutter build ios --release --no-codesign
-
       - name: Upload Apk
         uses: actions/upload-artifact@v4
         with:
           name: release-apk-${{ github.run_number }}
           path: build/app/outputs/flutter-apk/app-release.apk
 
+      - name: Build AppBundle release
+        run: flutter build appbundle
+
       - name: Upload Appbundle
         uses: actions/upload-artifact@v4
         with:
           name: release-appbundle-${{ github.run_number }}
           path: build/app/outputs/bundle/release/app-release.aab
+          
+      - name: Build ios release
+        run: flutter build ios --release --no-codesign
 
-      - name: Archive .app to .ipa
+      - name: Archive iOS app
         run: |
-          mkdir -p build/ios/ipa
-          xcrun xcodebuild -exportArchive \
+          flutter build ios --release --no-codesign
+          xcodebuild archive \
+            -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -archivePath build/ios/archive/Runner.xcarchive \
+            -destination "generic/platform=iOS" \
+            -allowProvisioningUpdates
+        
+      - name: Export .ipa
+        run: |
+          xcodebuild -exportArchive \
             -archivePath build/ios/archive/Runner.xcarchive \
             -exportPath build/ios/ipa \
-            -exportOptionsPlist ios/ExportOptions.plist || true
+            -exportOptionsPlist ios/ExportOptions.plist
 
       - name: Upload .ipa as artifact
         uses: actions/upload-artifact@v4
