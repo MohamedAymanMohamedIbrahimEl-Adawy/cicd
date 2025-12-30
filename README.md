@@ -1,4 +1,4 @@
-# cicd
+## CI CD For Flutter App Without flavors
 
 Flutter project to explain CI/CD.
 
